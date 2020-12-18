@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -23,16 +24,24 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class MainScreenController implements Initializable {
 
+	//private static final String SERVER_HOST = "25.61.184.100";
 	private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 6543;
     private static final Logger LOGGER = Logger.getLogger(MainScreenController.class.getName());
@@ -43,6 +52,7 @@ public class MainScreenController implements Initializable {
 	private Scanner scanner;
 	
 	private String user;
+	private User userObj;
 	
 	private String serverReply;
 	
@@ -72,10 +82,20 @@ public class MainScreenController implements Initializable {
 	@FXML
 	private Label userNameLabel;
 	
-	private String selectedUser;
+	@FXML
+	private TextField txtAddFriend;
 	
+	@FXML
+	private Button btnAddFriend;	
+	
+	@FXML
+	private Button btnCheckRequests;
+	
+	private String selectedUser;	
 	
 	Connection connection = null;
+//	PreparedStatement preparedStatement = null;
+//	ResultSet resultSet = null;
 	
 	public MainScreenController() throws UnknownHostException, IOException {
 		connection = ConnectionConfiguration.getConnection();
@@ -86,8 +106,6 @@ public class MainScreenController implements Initializable {
 		initData(selectedUser, socket, inFromServer, outToServer, scanner);
 		txtChattingWith.setText("You are chatting with: " + selectedUser);
 		outToServer.println("CONNECTTO" + " " + selectedUser);
-		chatText = "";
-		txtChat.clear();
 		
 	}
 	
@@ -140,7 +158,7 @@ public class MainScreenController implements Initializable {
 				
 			}
 			
-			ObservableList<String> items =FXCollections.observableArrayList ();
+			ObservableList<String> items = FXCollections.observableArrayList();
 			items.addAll(users);
 			listUsers.setItems(items);
 			
@@ -151,7 +169,12 @@ public class MainScreenController implements Initializable {
 	public void initUser(String user)
 	{
 		this.user = user;
-		userNameLabel.setText(user);
+		//userNameLabel.setText(user);
+	}
+	
+	public void initUser(User user) {
+		this.userObj = user;
+		userNameLabel.setText(userObj.getUserName());
 	}
 	
 	public void initConnention() throws UnknownHostException, IOException
@@ -159,6 +182,7 @@ public class MainScreenController implements Initializable {
 		socket = new Socket(SERVER_HOST, SERVER_PORT);
 		inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outToServer = new PrintWriter(socket.getOutputStream(), true);
+		scanner = new Scanner(System.in);
 
 		System.out.println("Connected to the server.");
 
@@ -180,6 +204,7 @@ public class MainScreenController implements Initializable {
 							txtChat.setText(chatText);
 						}
 						
+						//System.out.println(reply);
 					} catch (final IOException e) {
 						LOGGER.log(Level.INFO, "Error occured while reading server response");
 						LOGGER.log(Level.INFO, e.getMessage(), e);
@@ -207,5 +232,43 @@ public class MainScreenController implements Initializable {
 		});
 
 	}
+	
+	public void addFriend(ActionEvent event) throws IOException, SQLException{
+		String username = txtAddFriend.getText();
+		
+		UserData userData = new UserData();
+		User receiver = userData.getUser(username);
+		
+		if (receiver!=null) {
+			userData.sendFriendRequest(userObj, receiver);
+			infoBox("Friend request sent to " + username, null, "Success!");
+		} else {
+			infoBox("No user under the name " + username + " could be found.", null, "Failed!");
+		}
+	}
+	
+	public static void infoBox(String infoMessagem, String headerText, String title)
+	{
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setContentText(infoMessagem);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.showAndWait();
+	}
+	
+	public void checkRequests(ActionEvent event) throws IOException, SQLException{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/gui/friends.fxml"));
+		Parent parent = loader.load();
+        
+		Scene scene = new Scene(parent);
+				
+		FriendsController friendsController = loader.getController();
+		friendsController.initUser(userObj);
 
+		Stage newStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		newStage.setScene(scene);
+		newStage.show();
+	}
+	
 }
