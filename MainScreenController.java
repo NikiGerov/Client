@@ -64,8 +64,11 @@ public class MainScreenController implements Initializable {
 	@FXML
 	private Text txtChattingWith;
 	
+	//@FXML
+	//private ListView<String> listUsers;
+	
 	@FXML
-	private ListView<String> listUsers;
+	private ListView<User> listUsers;
 	
 	@FXML
 	private Button btnOpenChat;
@@ -143,7 +146,7 @@ public class MainScreenController implements Initializable {
 	
 	public void loadUsers(ActionEvent event) throws IOException
 	{
-		outToServer.println(Command.LOADUSERS);
+		/*outToServer.println(Command.LOADUSERS);
 		List<String> users = new ArrayList<>();
 		if(serverReply != null)
 		{
@@ -160,9 +163,20 @@ public class MainScreenController implements Initializable {
 			
 			ObservableList<String> items = FXCollections.observableArrayList();
 			items.addAll(users);
-			listUsers.setItems(items);
-			
+			listUsers.setItems(items);*/
+		
+		try {
+			listUsers.getItems().clear();
+			UserData userData = new UserData();
+			List<User> friendsList = new ArrayList<User>();
+			friendsList = userData.getFriends(userObj);
+			for(User user : friendsList) {
+				listUsers.getItems().add(user);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+			
 		
 	}
 	
@@ -222,13 +236,19 @@ public class MainScreenController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
-		listUsers.getSelectionModel().selectedItemProperty().addListener(
+		/*listUsers.getSelectionModel().selectedItemProperty().addListener(
 				new ChangeListener<String>() {
 					public void changed(ObservableValue<? extends String> ov, 
 		                    String old_val, String new_val) {
 		                        selectedUser = new_val;
 		                        btnOpenChat.setDisable(false);
 				}
+		});*/
+		
+		listUsers.setOnMouseClicked(event -> {
+			User senderUser = listUsers.getSelectionModel().getSelectedItem();
+			selectedUser = senderUser.getUserName();
+			btnOpenChat.setDisable(false);
 		});
 
 	}

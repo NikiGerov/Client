@@ -38,12 +38,15 @@ public class FriendsController implements Initializable {
 	private Label label;
 	@FXML
 	private Button btnBack;
+	
+	private int selectedIndex;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		listRequests.setOnMouseClicked(event -> {
 			senderUser = listRequests.getSelectionModel().getSelectedItem();
 			label.setText(senderUser.getUserName());
+			selectedIndex = listRequests.getSelectionModel().getSelectedIndex();
 		});
 	}
 	
@@ -54,7 +57,6 @@ public class FriendsController implements Initializable {
 			requests = userData.getPendingRequests(currentUser);
 			for(User user : requests) {
 				listRequests.getItems().add(user);
-				System.out.println(user.toString());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -63,12 +65,14 @@ public class FriendsController implements Initializable {
 	
 	public void acceptFriend(ActionEvent event) throws IOException, SQLException{
 		userData.replyRequest(senderUser, currentUser, true);
-		infoBox("Accepted " + senderUser.getUserName() + "'s friend request.", null, "Declined");
+		infoBox("Accepted " + senderUser.getUserName() + "'s friend request.", null, "Accepted");
+		listRequests.getItems().remove(selectedIndex);
 	}
 	
 	public void declineFriend(ActionEvent event) throws IOException, SQLException{
 		userData.replyRequest(senderUser, currentUser, false);
 		infoBox("Declined " + senderUser.getUserName() + "'s friend request.", null, "Declined");
+		listRequests.getItems().remove(selectedIndex);
 	}
 	
 	public static void infoBox(String infoMessagem, String headerText, String title)
