@@ -43,11 +43,11 @@ public class FriendsController implements Initializable {
 	
 	private int selectedIndex;
 	
-	Connection connection = null;
+//	Connection connection = null;
 
-	public FriendsController() throws UnknownHostException, IOException {
-		connection = ConnectionConfiguration.getConnection();
-	}
+//	public FriendsController() throws UnknownHostException, IOException {
+//		connection = ConnectionConfiguration.getConnection();
+//	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
