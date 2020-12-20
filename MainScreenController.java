@@ -284,10 +284,13 @@ public class MainScreenController implements Initializable {
 		loader.setLocation(getClass().getResource("/gui/friends.fxml"));
 		
 		Scene scene = new Scene(loader.load());
-        Stage stage = new Stage();
-        stage.setTitle("Friend requests");
-        stage.setScene(scene);
-        stage.show();
+
+		FriendsController friendsController = loader.getController();
+		friendsController.initUser(userObj);
+		
+		Stage newStage = new Stage();
+		newStage.setScene(scene);
+		newStage.show();
 	}
 	
 }
