@@ -94,6 +94,9 @@ public class MainScreenController implements Initializable {
 	@FXML
 	private Button btnCheckRequests;
 	
+	@FXML
+	private Button btnCheckMsgs;
+	
 	private String selectedUser;	
 	
 	Connection connection = null;
@@ -119,14 +122,18 @@ public class MainScreenController implements Initializable {
 		
 	}
 	
-	public void send(ActionEvent event) throws IOException
+	public void send(ActionEvent event) throws IOException, SQLException
 	{
 		
 		String msg = txtMsg.getText().toString();
 		
 		if(msg.length()>0)
 		{
-			outToServer.println(Command.MSG + " " + user + ": " + msg);
+			UserData userData = new UserData(connection);
+			
+			outToServer.println(Command.MSG + " " + userData.getUser(selectedUser).getId() + " " + user + ": " + msg);
+			
+			
 			chatText = chatText + "You: " + msg + "\n";
 			txtChat.setText(chatText);
 			txtMsg.clear();
@@ -191,16 +198,19 @@ public class MainScreenController implements Initializable {
 		userNameLabel.setText(userObj.getUserName());
 	}
 	
-	public void initConnention() throws UnknownHostException, IOException
+	public void initConnention() throws UnknownHostException, IOException, SQLException
 	{
 		socket = new Socket(SERVER_HOST, SERVER_PORT);
 		inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outToServer = new PrintWriter(socket.getOutputStream(), true);
-		scanner = new Scanner(System.in);
+//		scanner = new Scanner(System.in);
 
 		System.out.println("Connected to the server.");
+		
+		UserData u = new UserData(connection);
+		User userObj = u.getUser(user);
 
-		outToServer.println(user);
+		outToServer.println(user + " " + userObj.getId());
 
 		Thread th = new Thread(new Task<Void>() {
 
@@ -213,7 +223,7 @@ public class MainScreenController implements Initializable {
 						
 						if(reply.startsWith("MSG"))
 						{
-							reply = reply.replaceFirst("MSG", "");
+							reply = reply.split(" ")[2] + " " + reply.split(" ")[3];
 							chatText = chatText + reply + "\n";
 							txtChat.setText(chatText);
 						}
@@ -287,6 +297,20 @@ public class MainScreenController implements Initializable {
 
 		FriendsController friendsController = loader.getController();
 		friendsController.initUser(userObj, connection);
+		
+		Stage newStage = new Stage();
+		newStage.setScene(scene);
+		newStage.show();
+	}
+	
+	public void checkMsgs(ActionEvent event) throws IOException, SQLException{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/gui/messages.fxml"));
+		
+		Scene scene = new Scene(loader.load());
+
+		MessagesController controller = loader.getController();
+		controller.initUsersSentMsgs(userObj, connection);
 		
 		Stage newStage = new Stage();
 		newStage.setScene(scene);
