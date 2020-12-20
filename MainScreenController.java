@@ -17,6 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,12 +30,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -278,16 +282,12 @@ public class MainScreenController implements Initializable {
 	public void checkRequests(ActionEvent event) throws IOException, SQLException{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/gui/friends.fxml"));
-		Parent parent = loader.load();
-        
-		Scene scene = new Scene(parent);
-				
-		FriendsController friendsController = loader.getController();
-		friendsController.initUser(userObj);
-
-		Stage newStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		newStage.setScene(scene);
-		newStage.show();
+		
+		Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+        stage.setTitle("Friend requests");
+        stage.setScene(scene);
+        stage.show();
 	}
 	
 }
