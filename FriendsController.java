@@ -2,6 +2,8 @@ package application;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,7 +42,13 @@ public class FriendsController implements Initializable {
 	private Button btnBack;
 	
 	private int selectedIndex;
+	
+	Connection connection = null;
 
+	public FriendsController() throws UnknownHostException, IOException {
+		connection = ConnectionConfiguration.getConnection();
+	}
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		listRequests.setOnMouseClicked(event -> {
@@ -52,10 +60,10 @@ public class FriendsController implements Initializable {
 		});
 	}
 	
-	public void initUser(User user1) {
+	public void initUser(User user1, Connection pConnection) {
 		this.currentUser=user1;
 		try {
-			userData = new UserData();
+			userData = new UserData(pConnection);
 			requests = userData.getPendingRequests(currentUser);
 			for(User user : requests) {
 				listRequests.getItems().add(user);

@@ -286,7 +286,7 @@ public class MainScreenController implements Initializable {
 		Scene scene = new Scene(loader.load());
 
 		FriendsController friendsController = loader.getController();
-		friendsController.initUser(userObj);
+		friendsController.initUser(userObj, connection);
 		
 		Stage newStage = new Stage();
 		newStage.setScene(scene);

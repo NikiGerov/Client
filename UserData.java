@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserData {
 	private Connection connection;
@@ -67,7 +69,7 @@ public class UserData {
 		
 		while(resultSet.next()) {
 			pendingRequests.add(new User(resultSet.getInt("user_id"), 
-					resultSet.getString("name"), resultSet.getString("password")));
+					resultSet.getString("name")));
 		}
 		
 		return pendingRequests;
@@ -96,7 +98,7 @@ public class UserData {
 		prepStmt.setInt(2, userId);
 		resultSet = prepStmt.executeQuery();
 		
-		List<Integer> userIdsList = new ArrayList<>();
+		Set<Integer> userIdsList = new HashSet<>();
 		
 		while(resultSet.next()) {
 			
