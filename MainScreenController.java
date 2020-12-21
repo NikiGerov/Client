@@ -17,25 +17,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -203,15 +197,17 @@ public class MainScreenController implements Initializable {
 		socket = new Socket(SERVER_HOST, SERVER_PORT);
 		inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outToServer = new PrintWriter(socket.getOutputStream(), true);
-//		scanner = new Scanner(System.in);
 
-		System.out.println("Connected to the server.");
+		LOGGER.log(Level.INFO, "Connected to the server.");
 		
 		UserData u = new UserData(connection);
 		User userObj = u.getUser(user);
 
 		outToServer.println(user + " " + userObj.getId());
 
+		
+//		new ReaderThread2(inFromServer, serverReply, txtChat, chatText).run();
+		
 		Thread th = new Thread(new Task<Void>() {
 
 			@Override
@@ -223,12 +219,17 @@ public class MainScreenController implements Initializable {
 						
 						if(reply.startsWith("MSG"))
 						{
-							reply = reply.split(" ")[2] + " " + reply.split(" ")[3];
+							String[] arr = reply.split(" ");
+							
+							String command = arr[0];
+							String id = arr[1];
+							
+							reply = reply.substring(command.length() + id.length() + 2, reply.length());
+							
 							chatText = chatText + reply + "\n";
 							txtChat.setText(chatText);
 						}
 						
-						//System.out.println(reply);
 					} catch (final IOException e) {
 						LOGGER.log(Level.INFO, "Error occured while reading server response");
 						LOGGER.log(Level.INFO, e.getMessage(), e);
@@ -245,15 +246,6 @@ public class MainScreenController implements Initializable {
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
-		/*listUsers.getSelectionModel().selectedItemProperty().addListener(
-				new ChangeListener<String>() {
-					public void changed(ObservableValue<? extends String> ov, 
-		                    String old_val, String new_val) {
-		                        selectedUser = new_val;
-		                        btnOpenChat.setDisable(false);
-				}
-		});*/
 		
 		listUsers.setOnMouseClicked(event -> {
 			User senderUser = listUsers.getSelectionModel().getSelectedItem();
