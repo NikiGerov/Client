@@ -1,16 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FriendsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FriendsController">
    <children>
-      <ListView fx:id="listRequests" layoutX="36.0" layoutY="55.0" prefHeight="217.0" prefWidth="127.0" />
-      <Button fx:id="btnAccept" layoutX="191.0" layoutY="151.0" mnemonicParsing="false" onAction="#acceptFriend" prefHeight="25.0" prefWidth="56.0" text="Accept" />
-      <Button fx:id="btnDecline" layoutX="296.0" layoutY="151.0" mnemonicParsing="false" onAction="#declineFriend" text="Decline" />
-      <Label fx:id="label" alignment="CENTER" layoutX="193.0" layoutY="82.0" prefHeight="17.0" prefWidth="154.0" text="Label" textAlignment="CENTER" />
-      <Button fx:id="btnBack" layoutX="36.0" layoutY="13.0" mnemonicParsing="false" onAction="#goBack" text="Close" />
+      <Pane layoutX="178.0" layoutY="-1.0" prefHeight="306.0" prefWidth="228.0" style="-fx-background-color: #b359dc;">
+         <children>
+            <Button fx:id="btnDecline" layoutX="86.0" layoutY="197.0" mnemonicParsing="false" onAction="#declineFriend" style="-fx-background-color: white;" text="Decline">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="btnAccept" layoutX="85.0" layoutY="155.0" mnemonicParsing="false" onAction="#acceptFriend" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: white;" text="Accept">
+               <effect>
+                  <InnerShadow color="WHITE" />
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Label fx:id="label" alignment="CENTER" layoutX="37.0" layoutY="109.0" prefHeight="17.0" prefWidth="154.0" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <ListView fx:id="listRequests" layoutX="24.0" layoutY="49.0" prefHeight="217.0" prefWidth="127.0" />
+      <Button fx:id="btnBack" layoutX="65.0" layoutY="271.0" mnemonicParsing="false" onAction="#goBack" text="Close">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Text layoutX="24.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User" textAlignment="CENTER" wrappingWidth="127.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
