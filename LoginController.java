@@ -57,12 +57,18 @@ public class LoginController implements Initializable {
 		return passwordEncryptor.encryptPassword(password);
 	}
 	
-	public void register(ActionEvent event)
+	public void register(ActionEvent event) throws SQLException
 	{
 		String username = txtUsername.getText().toString();
 		String password = encryptPassword(txtPassword.getText().toString());		
+		
+		UserData u = new UserData(connection);
+		if(u.getUser(username) != null)
+		{
+			infoBox("User exists", null, "Try again!");
+		}
 						
-		if(username.length() > 0 && password.length() > 0)
+		else if(username.length() > 0 && password.length() > 0)
 		{
 			try {
 				String sql = "INSERT INTO user (name, password) VALUES (?, ?)";
