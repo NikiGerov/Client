@@ -118,8 +118,6 @@ public class LoginController implements Initializable {
 			infoBox("Please enter correct username and password", null, "Failed!");
 		} else {
 			dbUser = new User(resultSet.getInt("user_id"), resultSet.getString("name"), resultSet.getString("password"));
-//			System.out.println("entryUser: " + entryUser);
-//			System.out.println("dbUser: " + dbUser);
 			if(isMatch(entryUser, dbUser)) {
 				FXMLLoader loader = new FXMLLoader();
 				loader.setLocation(getClass().getResource("/gui/main.fxml"));

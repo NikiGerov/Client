@@ -20,6 +20,8 @@ public class UserData {
 	private String UNREAD_MSGS_SENDER_ID_QUERY = "SELECT sender_id FROM messages WHERE messages.receiver_id=? AND delivered=0";
 	private String UNREAD_MSGS_CONTENT_QUERY = "SELECT content FROM messages WHERE messages.sender_id=? AND messages.receiver_id=? AND delivered=0";
 	
+	private String MSGS_QUERY = "SELECT content, date FROM messages WHERE messages.receiver_id=? AND messages.sender_id=?";
+	
 //	private String GET_FRIENDS = "SELECT user.* FROM friends_list JOIN user ON user.user_id = friends_list.sender_id WHERE (friends_list.sender_id=? OR friends_list.receiver_id=?) AND accepted=1";
 	private String GET_FRIENDS = "SELECT sender_id, receiver_id FROM friends_list WHERE (friends_list.sender_id=? OR friends_list.receiver_id=?) AND accepted=1";
 	private String GET_USER_BY_ID = "SELECT user_id, name FROM user WHERE user_id = ?";
@@ -123,6 +125,20 @@ public class UserData {
 		prepStmt.execute();
 		
 		return unreadMessages;
+	}
+	
+	public List<Message> getMessages(User receiver, User sender) throws SQLException{
+		List<Message> messages = new ArrayList<>();
+		prepStmt = connection.prepareStatement(MSGS_QUERY);
+		prepStmt.setInt(1, receiver.getId());
+		prepStmt.setInt(2, sender.getId());
+		resultSet = prepStmt.executeQuery();
+		
+		while(resultSet.next()) {
+			messages.add(new Message(resultSet.getString("content"), resultSet.getTimestamp("date")));
+		}
+		
+		return messages;
 	}
 	
 //	public List<User> getFriends(User user) throws SQLException{

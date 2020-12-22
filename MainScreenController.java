@@ -94,21 +94,23 @@ public class MainScreenController implements Initializable {
 	private String selectedUser;	
 	
 	Connection connection = null;
-//	PreparedStatement preparedStatement = null;
-//	ResultSet resultSet = null;
 	
 	public MainScreenController() throws UnknownHostException, IOException {
 		connection = ConnectionConfiguration.getConnection();
 	}
 	
-	public void connect(ActionEvent event) throws IOException
+	ChatHistoryService service = new ChatHistoryService();
+	public void connect(ActionEvent event) throws IOException, SQLException
 	{
 		initData(selectedUser, socket, inFromServer, outToServer, scanner);
 		txtChattingWith.setText("You are chatting with: " + selectedUser);
 		outToServer.println("CONNECTTO" + " " + selectedUser);
 		
+		txtChat.clear();
+		chatText = service.createChatHistory(chatText, connection, selectedUser, user);
+		txtChat.setText(chatText);
 	}
-	
+
 	public void exit(ActionEvent event) throws IOException
 	{
 		outToServer.println("CLOSE" + " " + user);
